@@ -15,6 +15,7 @@ class ProductController extends Controller
     {
         $products = Product::all();
         return view('products.index', compact('products'));
+        # load additonal data, such as categories and brands, if needed
     }
 
     /**
@@ -23,6 +24,7 @@ class ProductController extends Controller
     public function create()
     {
         return view('products.create');
+        # add categories and brand here after updating the models are filled with data
     }
 
     /**
@@ -31,6 +33,8 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         Product::create($request->all());
+        # make a adjust to the store method if we use validation, for example: $name = => $request->validate(['name' => 'required|string|max:255']);
+        # attach the product's categories and brands if needed
         return redirect()->route('products.index');
     }
 
@@ -50,6 +54,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         return view('products.edit', compact('product'));
+        # edit if we use categories and brands;
     }
 
     /**
@@ -57,9 +62,11 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+        # validate the request data (e.g., name, description, price, etc.)
         $product = Product::findOrFail($id);
         $product->update($request->all());
+        # make a adjust to the update method if we use validation, for example: $name = => $request->validate(['name' => 'required|string|max:255']);
+        # sync the product's categories and brands if needed
         return redirect()->route('products.index');
     }
 
