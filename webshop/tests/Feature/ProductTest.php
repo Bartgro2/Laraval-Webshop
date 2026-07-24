@@ -24,4 +24,11 @@ class ProductTest extends TestCase
         $response->assertStatus(404);
     }
 
+    public function test_delete_nonexistent_product(): void
+    {
+        $response = $this->delete('/products/9999');
+        $response->assertStatus(404);
+    }
+
+
 }
