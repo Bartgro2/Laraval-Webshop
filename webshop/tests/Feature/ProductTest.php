@@ -8,12 +8,10 @@ use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
-
     use RefreshDatabase;
     /**
      * A basic feature test example.
      */
-
 
     public function test_view_nonexistent_product(): void
     {
@@ -30,5 +28,9 @@ class ProductTest extends TestCase
         $response->assertStatus(404);
     }
 
-
+    public function test_show_products_empty(): void
+    {
+        $response = $this->get('/products');
+        $response->assertStatus(200);
+    }
 }
