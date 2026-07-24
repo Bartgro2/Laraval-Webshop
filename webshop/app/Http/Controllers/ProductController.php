@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\ProductFilter;
 use Illuminate\Http\Request;
 
 
@@ -11,11 +12,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request) 
     {
         $products = Product::all();
+        $products = ProductFilter::filter(Product::query(), $request->all())->get();
         return view('products.index', compact('products'));
-        # load additonal data, such as categories and brands, if needed
+
+        
     }
 
     /**
