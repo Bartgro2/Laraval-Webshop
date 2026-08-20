@@ -5,7 +5,7 @@
                 <a href="#" class="text-xl font-bold text-white">Webshop</a>
             </div>
             <div class="flex">
-                <a href="{{ route('#') }}" class="ml-4 text-white">Home</a>
+                <a href="{{ route('home') }}" class="ml-4 text-white">Home</a>
             </div>
         </div>
     </div>
