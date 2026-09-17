@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProductRequestForm;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Brand;
 use App\ProductFilter;
 use Illuminate\Http\Request;
 
@@ -17,8 +20,6 @@ class ProductController extends Controller
         $products = Product::all();
         $products = ProductFilter::filter(Product::query(), $request->all())->get();
         return view('products.index', compact('products'));
-
-        
     }
 
     /**
@@ -26,19 +27,25 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
-        # add categories and brand here after updating the models are filled with data
+        $brands = Brand::all();
+        $categories = Category::all();
+        return view('products.create', compact('brands', 'categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequestForm $request)
     {
-        Product::create($request->all());
-        # make a adjust to the store method if we use validation, for example: $name = => $request->validate(['name' => 'required|string|max:255']);
-        # attach the product's categories and brands if needed
-        return redirect()->route('products.index');
+        $validatedData = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = $request->file('image')->store('products', 'public');
+        }
+
+        Product::create($validatedData);
+
+        return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
     /**
@@ -46,31 +53,36 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::with(['category', 'brand'])->findOrFail($id);
         return view('products.show', compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        $product = Product::findOrFail($id);
-        return view('products.edit', compact('product'));
-        # edit if we use categories and brands;
+        $brands = Brand::all();
+        $categories = Category::all();
+
+        return view('products.edit', compact('product', 'brands', 'categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ProductRequestForm $request, string $id)
     {
-        # validate the request data (e.g., name, description, price, etc.)
         $product = Product::findOrFail($id);
-        $product->update($request->all());
-        # make a adjust to the update method if we use validation, for example: $name = => $request->validate(['name' => 'required|string|max:255']);
-        # sync the product's categories and brands if needed
-        return redirect()->route('products.index');
+        $validateData = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $validateData['image'] = $request->file('image')->store('product', 'public');
+        }   
+
+        $product->update($validateData);
+
+        return redirect()->route('products.index', $product->id)->with('success', 'Product updated successfully.');
     }
 
     /**
@@ -79,7 +91,8 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
+        // $product->detach(); 
         $product->delete();
-        return redirect()->route('products.index');
+        return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
     }
 }
