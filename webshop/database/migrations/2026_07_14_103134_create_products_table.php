@@ -16,14 +16,14 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 8, 2);
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('brand_id')->nullable()->constrained()->onDelete('set null');
             $table->string('color')->nullable();
             $table->string('material')->nullable();
             $table->string('image')->nullable();
             $table->integer('stock_quantity')->default(0);
             $table->string('size')->nullable();
-            $table->string('sku')->unique(); 
+            $table->string('sku')->unique();
             $table->timestamps();
         });
     }
