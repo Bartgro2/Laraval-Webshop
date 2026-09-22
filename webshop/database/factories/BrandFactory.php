@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\Model;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<Model>
  */
-class BrandsFactory extends Factory
+class BrandFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +17,9 @@ class BrandsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            // fill in the factory definition for the Brand model
+            'name' => $this->faker->word(),
+            'logo' => $this->faker->imageUrl(200, 200),
         ];
     }
 }
